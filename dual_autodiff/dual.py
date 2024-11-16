@@ -19,6 +19,9 @@ class Dual:
     def __radd__(self, other): # This just allows us to do c + dual (a,b) = dual(a+c, b) where c is a Real number
         return self.__add__(other)
     
+    def __neg__(self):
+        return Dual(-self.real, -self.dual)
+    
     def __sub__(self, other):
         if isinstance(other, Dual): #Dual - Dual
             return Dual(self.real - other.real, self.dual - other.dual)
@@ -82,7 +85,7 @@ class Dual:
     def __rpow__(self, other): # c**Dual where c is a real number
         if isinstance(other, (int, float)):
             if other <= 0:
-                raise ValueError(" Cannot raise a non-positive number to a Dual number")
+                raise ValueError("Cannot raise a non-positive number to a Dual number")
             real_part = other**self.real
             dual_part = real_part * self.dual * np.log(other)
             return Dual(real_part, dual_part)
@@ -90,16 +93,33 @@ class Dual:
             return NotImplementedError
     
     def __repr__(self): #String representation, needed for printing
-        return f"Dual(real={self.real}, dual={self.dual})"
-
+        return f"Dual(real={self.real}, dual={self.dual})"     
     
-x = Dual(2,1)
-y = Dual(3,2)
-
-print(x+y)
+    #Below are implementations of standard functions. The expressions come from f(a+be) = f(a) + f'(a)be
+    def sin(self):
+        real_part = np.sin(self.real)
+        dual_part = self.dual * np.cos(self.real)
+        return Dual(real_part, dual_part)
     
-        
-        
-
-
-        
+    def cos(self):
+        real_part = np.cos(self.real)
+        dual_part = -self.dual * np.sin(self.real)
+        return Dual(real_part, dual_part)
+    
+    def tan(self):
+        real_part = np.tan(self.real)
+        dual_part = self.dual * (1/np.cos(self.real))**2
+        return Dual(real_part, dual_part)
+    
+    def log(self):
+        if self.real <=0:
+            raise ValueError("Cannot take the Logarithm of a Dual number with a non-positive real component")
+        real_part = np.log(self.real)
+        dual_part = self.dual/self.real
+        return Dual(real_part, dual_part)
+    
+    def exp(self):
+        real_part = np.exp(self.real)
+        dual_part = self.dual * real_part
+        return Dual(real_part, dual_part)
+    
