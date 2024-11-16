@@ -60,6 +60,8 @@ class Dual:
             raise ZeroDivisionError("No unique solution for division by a Dual number with no real part")
         if isinstance(other, (int, float)):
             return Dual(other/self.real, (other * self.dual)/(self.real**2))
+        else:
+            return NotImplementedError
         
             
 
