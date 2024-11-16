@@ -89,6 +89,15 @@ class Dual:
         else:
             return NotImplementedError
     
+    def __repr__(self): #String representation, needed for printing
+        return f"Dual(real={self.real}, dual={self.dual})"
+
+    
+x = Dual(2,1)
+y = Dual(3,2)
+
+print(x+y)
+    
         
         
 
