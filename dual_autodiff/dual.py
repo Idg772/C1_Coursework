@@ -38,7 +38,7 @@ class Dual:
     
     def __mul__(self, other): # Dual * Dual and Dual * c where c is a real number
         if isinstance(other, Dual):
-            return Dual(self.real * other.real, (self.real * other.dual) + (self.dual + other.real))
+            return Dual(self.real * other.real, (self.real * other.dual) + (self.dual * other.real))
         elif isinstance(other, (int,float)):
             return Dual(self.real * other, self.dual * other)
         else:
@@ -122,4 +122,25 @@ class Dual:
         real_part = np.exp(self.real)
         dual_part = self.dual * real_part
         return Dual(real_part, dual_part)
+    
+    #https://numpy.org/devdocs/user/basics.subclassing.html Documentation
+    '''def ___array_ufunc__(self, ufunc, method, *inputs, **kwargs): #Allows numpy universal functions to be used
+        if method !== "__call__":
+            return NotImplemented
+        reals = []
+        duals = []
+        for i in inputs:
+            if isinstance(i, Dual):
+                reals.append(i.real)
+                duals.append(i.dual)
+            else:
+                reals.append(i)
+                duals.append(0)
+            
+'''
+
+a = Dual(1.0, 2.0)
+b = Dual(3.0, 4.0)
+
+print(b*a)
     
