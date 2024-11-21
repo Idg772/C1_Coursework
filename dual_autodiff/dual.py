@@ -73,11 +73,12 @@ class Dual:
                 return ZeroDivisionError
             dual_part = power * self.dual * (self.real**(power-1))
             return Dual(self.real**power, dual_part)
+        
         if isinstance(power, Dual): #Dual**Dual
             if self.real == 0:
                 raise ValueError("The power of a Dual is only defined for real component greater than 0")
             real_part = self.real ** power.real
-            dual_part = (self.dual * power.real * (self.real **(power.real - 1))) + real_part * np.log(self.real_part)
+            dual_part = (self.dual * power.real * (self.real **(power.real - 1))) + real_part * np.log(self.real)
             return Dual(real_part, dual_part)
         else:
             return NotImplementedError
@@ -124,38 +125,47 @@ class Dual:
         return Dual(real_part, dual_part)
     
     #https://numpy.org/devdocs/user/basics.subclassing.html Documentation
-    def ___array_ufunc__(self, ufunc, method, *inputs, **kwargs): #Allows numpy universal functions to be used
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs): #Incomplete
+        '''
+        Allows Numpyy universal funcuntions to operate on Duals and arrays of Duals
+        NB We have not create a custom numpy dtype. It is still dtype=object so other classes
+        can be entered into an array. This will likely result in an error when a function is called
+
+        Parameters:
+            ufunc: NumPy universal function to apply
+            method: String specifing the method name
+            *inputs: Dual numbers or arrays containing Dual numbers
+            **kwargs: Additional keyword arguments of the ufunc
+
+        Returns:
+            Result of the function while maintaining the algebra of the Dual numbers
+        
+        Raises:
+            Not Implemented if method != "__call__" or inputs are invalid types
+        '''
         if method != "__call__":
             return NotImplemented
+        if not all(isinstance(x, (Dual, np.ndarray)) and 
+                       (isinstance(x, Dual) or x.dtype == object) for x in inputs):
+                return NotImplemented
+        print('inputs')
+                
+        # Check if first input has the requested operation method (e.g., "sin", "exp")
+        # Create a vectorized function that can operate element-wise on arrays
+        # Create function that:
+        # - Takes arguments as tuple x 
+        # - Gets method from first arg (x[0])
+        # - Applies method using remaining args (x[1:])
+        # Apply vectorized function to first input and remaining inputs
+        if hasattr(inputs[0], method):
+            return np.vectorize(lambda *x: getattr(x[0], method)(*x[1:]))(inputs[0], *inputs[1:])
         
-        ufunc_map = {
-            np.add: self.__add__,
-            np.subtract: self.__sub__,
-            np.multiply: self.__mul__,
-            np.divide: self.__truediv__,
-            np.power: self.__pow__,
-            np.sin: self.sin,
-            np.cos: self.cos,
-            np.tan: self.tan,
-            np.exp: self.exp,
-            np.log: self.log
-        }
-
-        if ufunc in ufunc_map:
-            func = ufunc_map[ufunc]
-            return func(*inputs[1:])
-        else:
-            return NotImplemented
-
-
-
-# x = Dual(1,2)
-# print(np.exp(x))
-# print(x.log() - np.log(x))
-#Note that this produces the correct result of Dual(0,0).
-#This is true even though we have implemented __array_ufunc__ because of a legacy feature of NumPy.
-
-x = np.array([Dual(1,1), Dual(1,0)])
-
-print(np.sin(np.sum(x)))
-print(type(x))
+x = np.array([Dual(2,1), Dual(1,1)])
+print(np.exp2(x))
+'''
+This gives an error because we do not have exp2 defined.
+__array_ufunc__ will give the correct vectorized behaviour for the functions we have defined.
+TODO: Figure out if there is an easy way of doing this so that we can keep the algebra of the duals
+without implementing by hand.
+Some ufuncs like the bitwise operators don't really make sense to include.
+'''
