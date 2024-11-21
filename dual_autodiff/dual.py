@@ -32,7 +32,7 @@ class Dual:
     
     def __rsub__(self, other): # c - dual(a,b) = dual(c-a,-b)
         if isinstance(other, (int, float)):
-            return Dual(other - self.real, -self.float)
+            return Dual(other - self.real, -self.dual)
         else:
             return NotImplementedError
     
