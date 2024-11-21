@@ -124,23 +124,38 @@ class Dual:
         return Dual(real_part, dual_part)
     
     #https://numpy.org/devdocs/user/basics.subclassing.html Documentation
-    '''def ___array_ufunc__(self, ufunc, method, *inputs, **kwargs): #Allows numpy universal functions to be used
-        if method !== "__call__":
+    def ___array_ufunc__(self, ufunc, method, *inputs, **kwargs): #Allows numpy universal functions to be used
+        if method != "__call__":
             return NotImplemented
-        reals = []
-        duals = []
-        for i in inputs:
-            if isinstance(i, Dual):
-                reals.append(i.real)
-                duals.append(i.dual)
-            else:
-                reals.append(i)
-                duals.append(0)
-            
-'''
+        
+        ufunc_map = {
+            np.add: self.__add__,
+            np.subtract: self.__sub__,
+            np.multiply: self.__mul__,
+            np.divide: self.__truediv__,
+            np.power: self.__pow__,
+            np.sin: self.sin,
+            np.cos: self.cos,
+            np.tan: self.tan,
+            np.exp: self.exp,
+            np.log: self.log
+        }
 
-a = Dual(1.0, 2.0)
-b = Dual(3.0, 4.0)
+        if ufunc in ufunc_map:
+            func = ufunc_map[ufunc]
+            return func(*inputs[1:])
+        else:
+            return NotImplemented
 
-print(b*a)
-    
+
+
+# x = Dual(1,2)
+# print(np.exp(x))
+# print(x.log() - np.log(x))
+#Note that this produces the correct result of Dual(0,0).
+#This is true even though we have implemented __array_ufunc__ because of a legacy feature of NumPy.
+
+x = np.array([Dual(1,1), Dual(1,0)])
+
+print(np.sin(np.sum(x)))
+print(type(x))
