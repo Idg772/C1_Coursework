@@ -124,10 +124,20 @@ class Dual:
         dual_part = self.dual * real_part
         return Dual(real_part, dual_part)
     
+    def exp2(self):
+        print("exp2 called directly on Dual")
+        real_part = np.exp2(self.real)
+        dual_part = self.dual * np.exp2(self.real) * np.log(2)
+        return Dual(real_part, dual_part)
+
     #https://numpy.org/devdocs/user/basics.subclassing.html Documentation
-    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs): #Incomplete
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        print("Called with ufunc:", ufunc)  # See what function is being called
+        print("Method:", method)            # Check the method
+        print("Inputs:", inputs)            # Look at the inputs
+        print("Input types:", [type(x) for x in inputs])  # Check input types
         '''
-        Allows Numpyy universal funcuntions to operate on Duals and arrays of Duals
+        Allows Numpy universal functions to operate on Duals and arrays of Duals
         NB We have not create a custom numpy dtype. It is still dtype=object so other classes
         can be entered into an array. This will likely result in an error when a function is called
 
@@ -146,20 +156,96 @@ class Dual:
         if method != "__call__":
             return NotImplemented
         if not all(isinstance(x, (Dual, np.ndarray)) and 
-                       (isinstance(x, Dual) or x.dtype == object) for x in inputs):
+                    (isinstance(x, Dual) or x.dtype == object) for x in inputs):
                 return NotImplemented
-        print('inputs')
+        
+        UNARY_UFUNC_TO_DIFF = {
+            np.sin: (np.sin, np.cos),
+            np.cos: (np.cos, lambda x: -np.sin(x)),
+            np.exp: (np.exp, np.exp),
+            np.log: (np.log, lambda x: 1/x),
+            np.sqrt: (np.sqrt, lambda x: 0.5/np.sqrt(x)),
+            np.cbrt: (np.cbrt, lambda x: 1/(3*np.cbrt(x**2))),
+            np.square: (np.square, lambda x: 2*x),
+            np.reciprocal: (np.reciprocal, lambda x: -1/x**2),
+            np.tan: (np.tan, lambda x: 1/np.cos(x)**2),
+            np.arcsin: (np.arcsin, lambda x: 1/np.sqrt(1 - x**2)),
+            np.arccos: (np.arccos, lambda x: -1/np.sqrt(1 - x**2)),
+            np.arctan: (np.arctan, lambda x: 1/(1 + x**2)),
+            np.sinh: (np.sinh, np.cosh),
+            np.cosh: (np.cosh, np.sinh),
+            np.tanh: (np.tanh, lambda x: 1 - np.tanh(x)**2),
+            np.exp2: (np.exp2, lambda x: np.exp2(x) * np.log(2)),
+            np.log2: (np.log2, lambda x: 1/(x * np.log(2))),
+            np.log10: (np.log10, lambda x: 1/(x * np.log(10)))
+        }
+
+        # Dictionary for binary operations: (function, (derivative_wrt_x, derivative_wrt_y))
+        BINARY_UFUNC_TO_DIFF = {
+            np.add: (np.add, (lambda x,y: 1, lambda x,y: 1)),
+            np.subtract: (np.subtract, (lambda x,y: 1, lambda x,y: -1)),
+            np.multiply: (np.multiply, (lambda x,y: y, lambda x,y: x)),
+            np.divide: (np.divide, (lambda x,y: 1/y, lambda x,y: -x/y**2)),
+            np.power: (np.power, (lambda x,y: y * x**(y-1), 
+                                lambda x,y: x**y * np.log(x)))
+        }
+
+        # Handle numpy arrays first
+        if isinstance(inputs[0], np.ndarray):
+            print("Input is numpy array")
+            if ufunc in UNARY_UFUNC_TO_DIFF:
+                print("Found in UNARY_UFUNC_TO_DIFF")
+                f, fprime = UNARY_UFUNC_TO_DIFF[ufunc]
+                result = []
+                for dual in inputs[0]:
+                    print("Processing element:", dual)
+                    # Apply function and derivative directly
+                    real_part = f(dual.real)
+                    dual_part = dual.dual * fprime(dual.real)
+                    result.append(Dual(real_part, dual_part))
+                return np.array(result)
+            elif ufunc in BINARY_UFUNC_TO_DIFF and len(inputs) == 2:
+                f, (dfdx, dfdy) = BINARY_UFUNC_TO_DIFF[ufunc]
+                result = []
+                for dual1, dual2 in zip(inputs[0], inputs[1]):
+                    # Handle binary operations element-wise
+                    x_real = dual1.real if isinstance(dual1, Dual) else dual1
+                    y_real = dual2.real if isinstance(dual2, Dual) else dual2
+                    x_dual = dual1.dual if isinstance(dual1, Dual) else 0
+                    y_dual = dual2.dual if isinstance(dual2, Dual) else 0
+                    real_part = f(x_real, y_real)
+                    dual_part = x_dual * dfdx(x_real, y_real) + y_dual * dfdy(x_real, y_real)
+                    result.append(Dual(real_part, dual_part))
+                return np.array(result)
+
+        # Handle unary operations
+        if len(inputs) == 1 and ufunc in UNARY_UFUNC_TO_DIFF:
+            x = inputs[0]
+            f, fprime = UNARY_UFUNC_TO_DIFF[ufunc]
+            return Dual(f(x.real), x.dual * fprime(x.real))
+        
+        # Handle binary operations
+        if len(inputs) == 2 and ufunc in BINARY_UFUNC_TO_DIFF:
+            x, y = inputs[0], inputs[1]
+            f, (dfdx, dfdy) = BINARY_UFUNC_TO_DIFF[ufunc]
+            
+            # Handle different input types (Dual vs real number)
+            x_real = x.real if isinstance(x, Dual) else x
+            y_real = y.real if isinstance(y, Dual) else y
+            x_dual = x.dual if isinstance(x, Dual) else 0
+            y_dual = y.dual if isinstance(y, Dual) else 0
+            
+            real_part = f(x_real, y_real)
+            dual_part = x_dual * dfdx(x_real, y_real) + y_dual * dfdy(x_real, y_real)
+            
+            return Dual(real_part, dual_part)
                 
         # Check if first input has the requested operation method (e.g., "sin", "exp")
-        # Create a vectorized function that can operate element-wise on arrays
-        # Create function that:
-        # - Takes arguments as tuple x 
-        # - Gets method from first arg (x[0])
-        # - Applies method using remaining args (x[1:])
-        # Apply vectorized function to first input and remaining inputs
         if hasattr(inputs[0], method):
             return np.vectorize(lambda *x: getattr(x[0], method)(*x[1:]))(inputs[0], *inputs[1:])
         
+        return NotImplemented
+
 x = np.array([Dual(2,1), Dual(1,1)])
 print(np.exp2(x))
 '''
