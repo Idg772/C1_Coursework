@@ -38,10 +38,15 @@ def test_dual_division():
     d1 = Dual(6.0, 3.0)
     d2 = Dual(2.0, 1.0)
     result = d1 / d2
-    assert result == Dual(3.0, 0.5)
+    assert result == Dual(3.0, 0)
 
     result = d1 / 2.0
     assert result == Dual(3.0, 1.5)
+
+def test_scalar_division_by_dual():
+    d = Dual(2.0, 3.0)
+    result = 6.0 / d
+    assert result == Dual(3.0, -4.5)
 
 def test_dual_power():
     d1 = Dual(2.0, 3.0)
@@ -58,6 +63,28 @@ def test_autodiff_single_point():
 
     derivative = autodiff(f, 2.0)
     assert np.isclose(derivative, 7.0)
+
+def test_division_by_zero_real_part():
+    d1 = Dual(1.0, 2.0)
+    d2 = Dual(0.0, 1.0)
+    with pytest.raises(ZeroDivisionError):
+        _ = d1 / d2
+
+def test_zero_power_negative_dual():
+    d = Dual(0.0, 1.0)
+    with pytest.raises(ZeroDivisionError):
+        _ = d ** -1
+
+def test_addition_commutativity():
+    d1 = Dual(1.0, 2.0)
+    d2 = Dual(3.0, 4.0)
+    assert d1 + d2 == d2 + d1
+
+def test_multiplication_commutativity():
+    d1 = Dual(1.0, 2.0)
+    d2 = Dual(3.0, 4.0)
+    assert d1 * d2 == d2 * d1
+
 
 def test_autodiff_multiple_points():
     def f(x):

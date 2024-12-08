@@ -97,38 +97,50 @@ class Dual:
         """
         return self.__mul__(other)
     
-    def __truediv__(self, other):
-        """
-        Divide two dual numbers or divide a dual number by a scalar.
-
-        Uses the quotient rule for dual numbers.
-
-        Args:
-            other: A Dual number or scalar to divide by
-
-        Returns:
-            Dual: The quotient of the two numbers
-
-        Raises:
-            ZeroDivisionError: If dividing by zero
-        """
+    def __truediv__(self, other): # Dual/Dual and Dual/c where c is a real number
         if isinstance(other, Dual):
-            return Dual(self.real / other.real, 
-                       (self.dual * other.real - self.real * other.dual) / other.real**2)
+            if other.real == 0:
+                raise ZeroDivisionError("No unique solution for division by a Dual number with no real part")
+            else:
+                return Dual(self.real / other.real, (self.dual*other.real - self.real*other.dual)/(other.real**2))
+        elif isinstance(other, (int,float)):
+            return Dual(self.real / other, self.dual / other) # Native Python will raise a zero division error here if needed
         else:
-            return Dual(self.real / other, self.dual / other)
+            return NotImplementedError
     
-    def __rtruediv__(self, other):
-        return self.__truediv__(other)
-    
-    def __pow__(self, other):
-        if isinstance(other, Dual):
-            return Dual(self.real ** other.real, self.real ** other.real * (self.dual * other.real / self.real + other.dual * np.log(self.real)))
+    def __rtruediv__(self, other):  # c / Dual(a, b)
+        if self.real == 0:
+            raise ZeroDivisionError("Division by a Dual number with zero real part is undefined.")
+        if isinstance(other, (int, float)):
+            return Dual(other / self.real, (-other * self.dual) / (self.real ** 2))
         else:
-            return Dual(self.real ** other, other * self.real ** (other - 1) * self.dual)
+            return NotImplemented
+    
+    def __pow__(self, power):
+        if isinstance(power,(int,float)): #Dual**real
+            if self.real == 0 and power < 0:
+                raise ZeroDivisionError("Cannot raise a dual number with zero real part to a negative power.")
+            dual_part = power * self.dual * (self.real**(power-1))
+            return Dual(self.real**power, dual_part)
         
-    def __rpow__(self, other):
-        return self.__pow__(other)
+        if isinstance(power, Dual): #Dual**Dual
+            if self.real == 0:
+                raise ValueError("The power of a Dual is only defined for real component greater than 0")
+            real_part = self.real ** power.real
+            dual_part = (self.dual * power.real * (self.real **(power.real - 1))) + real_part * np.log(self.real)
+            return Dual(real_part, dual_part)
+        else:
+            return NotImplementedError
+    
+    def __rpow__(self, other): # c**Dual where c is a real number
+        if isinstance(other, (int, float)):
+            if other <= 0:
+                raise ValueError("Cannot raise a non-positive number to a Dual number")
+            real_part = other**self.real
+            dual_part = real_part * self.dual * np.log(other)
+            return Dual(real_part, dual_part)
+        else:
+            return NotImplemented
     
     def __neg__(self):
         return Dual(-self.real, -self.dual)
@@ -153,7 +165,8 @@ class Dual:
         return Dual(np.cos(self.real), -np.sin(self.real) * self.dual)
     
     def tan(self):
-        return Dual(np.tan(self.real), self.dual / np.cos(self.real))
+        return Dual(np.tan(self.real), 
+                self.dual * (1 / np.cos(self.real)**2))
     
     def exp(self):
         return Dual(np.exp(self.real), np.exp(self.real) * self.dual)
@@ -171,7 +184,8 @@ class Dual:
         return Dual(np.cosh(self.real), np.sinh(self.real) * self.dual)
     
     def tanh(self):
-        return Dual(np.tanh(self.real), self.dual / np.cosh(self.real))
+        return Dual(np.tanh(self.real),
+                self.dual * (1 / np.cosh(self.real)**2))
     
     def arcsin(self):
         return Dual(np.arcsin(self.real), self.dual / np.sqrt(1 - self.real**2))

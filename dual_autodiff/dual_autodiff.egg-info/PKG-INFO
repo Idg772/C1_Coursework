@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: dual_autodiff
+Version: 0.1.0
+Summary: Automatic differentiation using dual numbers
+Author-email: Iman Faisal <igf23@cam.ac.uk>
+Requires-Python: >=3.10
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: matplotlib
+Requires-Dist: sympy
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Provides-Extra: docs
+Requires-Dist: sphinx>=4.0.0; extra == "docs"
+Requires-Dist: sphinx-rtd-theme>=1.0.0; extra == "docs"
