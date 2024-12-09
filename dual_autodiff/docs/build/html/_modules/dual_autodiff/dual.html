@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dual_autodiff.dual &mdash; dual_autodiff 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            dual_autodiff
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../theory.html">Theory of Dual Numbers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dual_autodiff</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dual_autodiff.dual</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dual_autodiff.dual</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
+
+<div class="viewcode-block" id="Dual">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual">[docs]</a>
+<span class="k">class</span> <span class="nc">Dual</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class implementing dual numbers for automatic differentiation.</span>
+<span class="sd">    </span>
+<span class="sd">    A dual number has the form a + bε where:</span>
+<span class="sd">    - a is the real part</span>
+<span class="sd">    - b is the dual part</span>
+<span class="sd">    - ε is the dual unit with the property ε² = 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Dual.__init__">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">dual</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a dual number.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            real: The real part of the dual number</span>
+<span class="sd">            dual: The dual part of the dual number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">=</span> <span class="n">real</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">=</span> <span class="n">dual</span></div>
+
+    
+<div class="viewcode-block" id="Dual.__add__">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.__add__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add two dual numbers or a dual number and a scalar.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other: A Dual number or scalar to add</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The sum of the two numbers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reverse addition - called when a non-Dual is added to a Dual.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subtract two dual numbers or a scalar from a dual number.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other: A Dual number or scalar to subtract</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The difference of the two numbers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reverse subtraction - called when a non-Dual is subtracted from a Dual.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__sub__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__abs__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the absolute value of a dual number&#39;s real part.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Absolute value of the dual number. Because ε^2=0, this is just the absolute</span>
+<span class="sd">                   value of the real part.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="Dual.__mul__">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.__mul__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Multiply two dual numbers or a dual number and a scalar.</span>
+
+<span class="sd">        Uses the product rule: (a + bε)(c + dε) = ac + (ad + bc)ε</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other: A Dual number or scalar to multiply</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The product of the two numbers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">dual</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="n">other</span><span class="p">)</span></div>
+
+        
+    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reverse multiplication - called when a non-Dual is multiplied by a Dual.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="Dual.__truediv__">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.__truediv__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> <span class="c1"># Dual/Dual and Dual/c where c is a real number</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Division of two dual numbers or a dual number and a scalar.</span>
+<span class="sd">        Uses the quotient rule: (a + bε)/(c + dε) = (a/c) + ((bc - ad)/(c^2))ε  for c != 0</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            other: A Dual number or scalar to divide by</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The quotient of the two numbers</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ZeroDivisionError: If the divisor is a Dual number with zero real part</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ZeroDivisionError</span><span class="p">(</span><span class="s2">&quot;No unique solution for division by a Dual number with no real part&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="n">other</span><span class="p">)</span> <span class="c1"># Native Python will raise a zero division error here if needed</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ne">NotImplementedError</span></div>
+
+    
+    <span class="k">def</span> <span class="fm">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>  <span class="c1"># c / Dual(a, b)</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Division of a scalar by a dual number.</span>
+<span class="sd">        Uses the quotient rule: c/(a + bε) = (c/a) + (-(bc)/(a^2))ε for a != 0</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            other: A scalar to divide by the dual number</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The quotient of the two numbers</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ZeroDivisionError: If the dividend is a scalar with value 0</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ZeroDivisionError</span><span class="p">(</span><span class="s2">&quot;Division by a Dual number with zero real part is undefined.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">other</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">other</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+    
+<div class="viewcode-block" id="Dual.__pow__">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.__pow__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">power</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Exponentiation of a dual number by another dual number or a scalar.</span>
+<span class="sd">        Uses the chain rule: (a + bε)^c = a^c + c*a^(c-1)*bε</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            power: A Dual number or scalar to raise the dual number to</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The result of exponentiation</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ZeroDivisionError: If the real part of the dual number is 0 and the power is negative</span>
+<span class="sd">            ValueError: If the real part of the dual number is 0 and the power is a Dual number</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">power</span><span class="p">,(</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span> <span class="c1">#Dual**real</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">power</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ZeroDivisionError</span><span class="p">(</span><span class="s2">&quot;Cannot raise a dual number with zero real part to a negative power.&quot;</span><span class="p">)</span>
+            <span class="n">dual_part</span> <span class="o">=</span> <span class="n">power</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="p">(</span><span class="n">power</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="n">power</span><span class="p">,</span> <span class="n">dual_part</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span> <span class="c1">#Dual**Dual</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The power of a Dual is only defined for real component greater than 0&quot;</span><span class="p">)</span>
+            <span class="n">real_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">**</span> <span class="n">power</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">dual_part</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="n">power</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">**</span><span class="p">(</span><span class="n">power</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">+</span> <span class="n">real_part</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">real_part</span><span class="p">,</span> <span class="n">dual_part</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ne">NotImplementedError</span></div>
+
+    
+    <span class="k">def</span> <span class="fm">__rpow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> <span class="c1"># c**Dual where c is a real number</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Exponentiation of a scalar by a dual number.</span>
+<span class="sd">        Uses the chain rule: c**(a + bε) = c**a + c**a * b * log(c) * ε</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            other: A scalar to raise the dual number to</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The result of exponentiation</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the scalar is non-positive</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">other</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot raise a non-positive number to a Dual number&quot;</span><span class="p">)</span>
+            <span class="n">real_part</span> <span class="o">=</span> <span class="n">other</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">dual_part</span> <span class="o">=</span> <span class="n">real_part</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">real_part</span><span class="p">,</span> <span class="n">dual_part</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+    
+    <span class="k">def</span> <span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Negate a dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: The negated dual number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return a string representation of the dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A string representation of the dual number</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Dual(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="si">}</span><span class="s1">)&#39;</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Check if two dual numbers are equal.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            other: A Dual number or scalar to compare with</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the real and dual parts of the two numbers are equal, False otherwise</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dual</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">==</span> <span class="n">other</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">==</span> <span class="mi">0</span>
+        
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Check if two dual numbers are not equal.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            other: A Dual number or scalar to compare with</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the real and dual parts of the two numbers are not equal, False otherwise</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="Dual.sin">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.sin">[docs]</a>
+    <span class="k">def</span> <span class="nf">sin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the sine of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing sin(x) in the real part and cos(x) * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual part.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Dual.cos">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.cos">[docs]</a>
+    <span class="k">def</span> <span class="nf">cos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the cosine of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing cos(x) in the real part and -sin(x) * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual part.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Dual.tan">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.tan">[docs]</a>
+    <span class="k">def</span> <span class="nf">tan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the tangent of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing tan(x) in the real part and sec(x)^2 * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual part.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.exp">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.exp">[docs]</a>
+    <span class="k">def</span> <span class="nf">exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the exponential of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing exp(x) in the real part and exp(x) * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual part.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Dual.log">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.log">[docs]</a>
+    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the natural logarithm of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing log(x) in the real part and dx / x in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual part.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Dual.sqrt">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.sqrt">[docs]</a>
+    <span class="k">def</span> <span class="nf">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the square root of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing sqrt(x) in the real part and dx / (2 * sqrt(x)) in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual part.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.sinh">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.sinh">[docs]</a>
+    <span class="k">def</span> <span class="nf">sinh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the hyperbolic sine of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing sinh(x) in the real part and cosh(x) * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Dual.cosh">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.cosh">[docs]</a>
+    <span class="k">def</span> <span class="nf">cosh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the hyperbolic cosine of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing cosh(x) in the real part and sinh(x) * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Dual.tanh">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.tanh">[docs]</a>
+    <span class="k">def</span> <span class="nf">tanh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the hyperbolic tangent of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing tanh(x) in the real part and sech(x)^2 * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.arcsin">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.arcsin">[docs]</a>
+    <span class="k">def</span> <span class="nf">arcsin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the inverse sine (arcsin) of a Dual number.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dual: A Dual number containing arcsin(x) in the real part and 1/sqrt(1-x^2) * dx in the dual part,</span>
+<span class="sd">                  where x is the real part and dx is the dual part.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.arccos">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.arccos">[docs]</a>
+    <span class="k">def</span> <span class="nf">arccos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the inverse cosine (arccos) of a Dual number.</span>
+
+<span class="sd">        Returns a Dual number containing arccos(x) in the real part and </span>
+<span class="sd">        -1/sqrt(1-x^2) * dx in the dual part, where x is the real part and dx is the dual part.</span>
+
+<span class="sd">        Domain: -1 &lt;= real part &lt;= 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.arctan">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.arctan">[docs]</a>
+    <span class="k">def</span> <span class="nf">arctan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the inverse tangent (arctan) of a Dual number.</span>
+
+<span class="sd">        Returns a Dual number containing arctan(x) in the real part and </span>
+<span class="sd">        1/(1+x^2) * dx in the dual part, where x is the real part and dx is the dual part.</span>
+
+<span class="sd">        Domain: all real numbers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.arcsinh">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.arcsinh">[docs]</a>
+    <span class="k">def</span> <span class="nf">arcsinh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the inverse hyperbolic sine (arcsinh) of a Dual number.</span>
+
+<span class="sd">        Returns a Dual number containing arcsinh(x) in the real part and </span>
+<span class="sd">        1/sqrt(x^2+1) * dx in the dual part, where x is the real part and dx is the dual part.</span>
+
+<span class="sd">        Domain: all real numbers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsinh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.arccosh">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.arccosh">[docs]</a>
+    <span class="k">def</span> <span class="nf">arccosh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the inverse hyperbolic cosine (arccosh) of a Dual number.</span>
+
+<span class="sd">        Returns a Dual number containing arccosh(x) in the real part and </span>
+<span class="sd">        1/sqrt(x^2-1) * dx in the dual part, where x is the real part and dx is the dual part.</span>
+
+<span class="sd">        Domain: real part &gt;= 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccosh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="Dual.arctanh">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.Dual.arctanh">[docs]</a>
+    <span class="k">def</span> <span class="nf">arctanh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the inverse hyperbolic tangent (arctanh) of a Dual number.</span>
+
+<span class="sd">        Returns a Dual number containing arctanh(x) in the real part and </span>
+<span class="sd">        1/(1-x^2) * dx in the dual part, where x is the real part and dx is the dual part.</span>
+
+<span class="sd">        Domain: -1 &lt; real part &lt; 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="autodiff">
+<a class="viewcode-back" href="../../api.html#dual_autodiff.autodiff">[docs]</a>
+<span class="k">def</span> <span class="nf">autodiff</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span> 
+            <span class="n">dual_part</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the derivative of a function at given points using dual numbers.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        func: The function to differentiate. Should accept and work with Dual numbers.</span>
+<span class="sd">        x: Points at which to evaluate the derivative. Can be a single number or array-like.</span>
+<span class="sd">        dual_part: The dual part to use for differentiation (default=1.0)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The derivative(s) of the function at the given point(s).</span>
+<span class="sd">        Returns a numpy array for array-like input, or a float for scalar input.</span>
+<span class="sd">        </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; def f(x): return x**2  # f(x) = x²</span>
+<span class="sd">        &gt;&gt;&gt; autodiff(f, 2.0)  # Derivative of x² at x=2</span>
+<span class="sd">        4.0</span>
+<span class="sd">        &gt;&gt;&gt; autodiff(f, [1.0, 2.0, 3.0])  # Derivatives at multiple points</span>
+<span class="sd">        array([2., 4., 6.])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert input to numpy array if it&#39;s array-like</span>
+    <span class="n">x_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">scalar_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">scalar_input</span><span class="p">:</span>
+        <span class="n">x_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_array</span><span class="p">])</span>
+    
+    <span class="c1"># Compute derivatives using dual numbers</span>
+    <span class="n">derivatives</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x_array</span><span class="p">):</span>
+        <span class="c1"># Create dual number and evaluate function</span>
+        <span class="n">dual_x</span> <span class="o">=</span> <span class="n">Dual</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="n">dual_part</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">dual_x</span><span class="p">)</span>
+        
+        <span class="c1"># Extract derivative from dual part</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span>
+            <span class="n">derivatives</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">dual</span> <span class="o">/</span> <span class="n">dual_part</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">derivatives</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Function returned a constant</span>
+            
+    <span class="k">return</span> <span class="n">derivatives</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">scalar_input</span> <span class="k">else</span> <span class="n">derivatives</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Iman Faisal.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

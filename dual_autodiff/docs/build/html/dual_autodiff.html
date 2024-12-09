@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial: Automatic Differentiation with dual_autodiff &mdash; dual_autodiff 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="api.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            dual_autodiff
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="theory.html">Theory of Dual Numbers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial: Automatic Differentiation with dual_autodiff</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Basic-Operations-with-Dual-Numbers">Basic Operations with Dual Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Automatic-Differentiation-Basics">Automatic Differentiation Basics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Understanding-How-It-Works">Understanding How It Works</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Trigonometric-Functions">Trigonometric Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#The-Coursework-Example-Function">The Coursework Example Function</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dual_autodiff</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorial.html">Tutorial</a></li>
+      <li class="breadcrumb-item active">Tutorial: Automatic Differentiation with dual_autodiff</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dual_autodiff.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Tutorial:-Automatic-Differentiation-with-dual_autodiff">
+<h1>Tutorial: Automatic Differentiation with dual_autodiff<a class="headerlink" href="#Tutorial:-Automatic-Differentiation-with-dual_autodiff" title="Link to this heading"></a></h1>
+<p>This tutorial demonstrates how to use the <code class="docutils literal notranslate"><span class="pre">dual_autodiff</span></code> package for automatic differentiation using dual numbers.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dual_autodiff</span> <span class="k">as</span> <span class="nn">df</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<section id="Basic-Operations-with-Dual-Numbers">
+<h2>Basic Operations with Dual Numbers<a class="headerlink" href="#Basic-Operations-with-Dual-Numbers" title="Link to this heading"></a></h2>
+<p>Let’s start by creating dual numbers and performing basic arithmetic operations.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create dual numbers</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Dual</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># represents 2 + ε</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Dual</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># represents 3 + ε</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x = </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y = </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test basic operations</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Basic operations:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x + y = </span><span class="si">{</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x * y = </span><span class="si">{</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x / y = </span><span class="si">{</span><span class="n">x</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x ** 2 = </span><span class="si">{</span><span class="n">x</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+x = Dual(2.0, 1.0)
+y = Dual(3.0, 1.0)
+
+Basic operations:
+x + y = Dual(5.0, 2.0)
+x * y = Dual(6.0, 5.0)
+x / y = Dual(0.6666666666666666, 0.1111111111111111)
+x ** 2 = Dual(4.0, 4.0)
+</pre></div></div>
+</div>
+</section>
+<section id="Automatic-Differentiation-Basics">
+<h2>Automatic Differentiation Basics<a class="headerlink" href="#Automatic-Differentiation-Basics" title="Link to this heading"></a></h2>
+<p>The real power of dual numbers comes from automatic differentiation. Let’s see how this works with a simple polynomial function: f(x) = x² + 2x + 1</p>
+<p>The derivative of this function is f’(x) = 2x + 2, so we can verify our results.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="c1"># Let&#39;s differentiate at x = 2</span>
+<span class="n">x_value</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">derivative</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">autodiff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x_value</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;For f(x) = x² + 2x + 1 at x = </span><span class="si">{</span><span class="n">x_value</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Actual derivative f&#39;(x) = 2x + 2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculated derivative = </span><span class="si">{</span><span class="n">derivative</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected value f&#39;(</span><span class="si">{</span><span class="n">x_value</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="mi">2</span><span class="o">*</span><span class="n">x_value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+For f(x) = x² + 2x + 1 at x = 2.0:
+Actual derivative f&#39;(x) = 2x + 2
+Calculated derivative = 6.0
+Expected value f&#39;(2.0) = 6.0
+</pre></div></div>
+</div>
+</section>
+<section id="Understanding-How-It-Works">
+<h2>Understanding How It Works<a class="headerlink" href="#Understanding-How-It-Works" title="Link to this heading"></a></h2>
+<p>Let’s see what’s happening under the hood. When we use dual numbers, we’re essentially evaluating the function at a point ‘a’ and getting both the function value and its derivative at that point.</p>
+<p>For a dual number a + bε: - The real part gives us f(a) - The dual part gives us f’(a)⋅b</p>
+<p>Let’s demonstrate this by showing both parts of the dual number:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a dual number for x = 2</span>
+<span class="n">x_dual</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Dual</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># 2 + ε</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x_dual</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;When evaluating f(x) = x² + 2x + 1 at x = 2 + ε:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result = </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function value (real part) = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">real</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Derivative (dual part) = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">dual</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+When evaluating f(x) = x² + 2x + 1 at x = 2 + ε:
+Result = Dual(9.0, 6.0)
+Function value (real part) = 9.0
+Derivative (dual part) = 6.0
+</pre></div></div>
+</div>
+</section>
+<section id="Trigonometric-Functions">
+<h2>Trigonometric Functions<a class="headerlink" href="#Trigonometric-Functions" title="Link to this heading"></a></h2>
+<p>Our package also handles trigonometric functions. Let’s visualize the derivative of sin(x) over a range of values and compare it with what we expect (cos(x)).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a range of x values</span>
+<span class="n">x_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Calculate derivatives of sin(x)</span>
+<span class="n">derivatives</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">autodiff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">sin</span><span class="p">(),</span> <span class="n">x_values</span><span class="p">)</span>
+
+<span class="c1"># Plot the results</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">derivatives</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Computed derivative of sin(x)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x_values</span><span class="p">),</span> <span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;cos(x)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Derivative of sin(x)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/dual_autodiff_9_0.png" src="_images/dual_autodiff_9_0.png" />
+</div>
+</div>
+</section>
+<section id="The-Coursework-Example-Function">
+<h2>The Coursework Example Function<a class="headerlink" href="#The-Coursework-Example-Function" title="Link to this heading"></a></h2>
+<p>Now let’s tackle a more complex function: f(x) = log(sin(x)) + x²cos(x)</p>
+<p>This function combines several operations: 1. Trigonometric functions (sin and cos) 2. Logarithm 3. Polynomial terms 4. Products of functions</p>
+<p>We’ll compare our automatic differentiation with numerical differentiation to show the advantages of our method.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">complex_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Our complex example: f(x) = log(sin(x)) + x²cos(x)&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span>
+
+<span class="c1"># Evaluate at a specific point</span>
+<span class="n">x_test</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">derivative</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">autodiff</span><span class="p">(</span><span class="n">complex_function</span><span class="p">,</span> <span class="n">x_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;At x = </span><span class="si">{</span><span class="n">x_test</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Derivative = </span><span class="si">{</span><span class="n">derivative</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+At x = 1.5:
+Derivative = -1.9612372705533612
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">ipywidgets</span> <span class="kn">import</span> <span class="n">interact</span><span class="p">,</span> <span class="n">FloatSlider</span><span class="p">,</span> <span class="n">Dropdown</span><span class="p">,</span> <span class="n">VBox</span><span class="p">,</span> <span class="n">HBox</span><span class="p">,</span> <span class="n">Output</span>
+<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
+<span class="kn">import</span> <span class="nn">dual_autodiff</span> <span class="k">as</span> <span class="nn">df</span>
+
+<span class="c1"># Let&#39;s define a set of interesting functions that demonstrate different properties</span>
+<span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;f(x) = 2x + 1 - The simplest non-constant function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;f(x) = x² - 3x + 2 - A basic polynomial&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+
+<span class="k">def</span> <span class="nf">sine_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;f(x) = sin(2x) - A periodic function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span>
+
+<span class="k">def</span> <span class="nf">compound_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;f(x) = x²sin(x) - A product of polynomial and trigonometric function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
+
+<span class="c1"># Create a dictionary mapping function names to their implementations</span>
+<span class="n">function_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Linear (2x + 1)&#39;</span><span class="p">:</span> <span class="n">linear</span><span class="p">,</span>
+    <span class="s1">&#39;Quadratic (x² - 3x + 2)&#39;</span><span class="p">:</span> <span class="n">quadratic</span><span class="p">,</span>
+    <span class="s1">&#39;Sine (sin(2x))&#39;</span><span class="p">:</span> <span class="n">sine_function</span><span class="p">,</span>
+    <span class="s1">&#39;Compound (x²sin(x))&#39;</span><span class="p">:</span> <span class="n">compound_function</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">create_interactive_plot</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an interactive visualization to explore automatic differentiation&quot;&quot;&quot;</span>
+
+    <span class="n">plot_output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
+    <span class="n">text_output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
+
+    <span class="c1"># Create widgets</span>
+    <span class="n">function_dropdown</span> <span class="o">=</span> <span class="n">Dropdown</span><span class="p">(</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">function_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Function:&#39;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Quadratic (x² - 3x + 2)&#39;</span>
+    <span class="p">)</span>
+
+    <span class="n">x_range_slider</span> <span class="o">=</span> <span class="n">FloatSlider</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="nb">min</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="nb">max</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Plot Range:&#39;</span><span class="p">,</span>
+        <span class="n">continuous_update</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update_plot</span><span class="p">(</span><span class="n">function_name</span><span class="p">,</span> <span class="n">x_range</span><span class="p">):</span>
+        <span class="n">selected_function</span> <span class="o">=</span> <span class="n">function_dict</span><span class="p">[</span><span class="n">function_name</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="n">plot_output</span><span class="p">:</span>
+            <span class="n">plot_output</span><span class="o">.</span><span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Create x values for plotting</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">x_range</span><span class="p">,</span> <span class="n">x_range</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+            <span class="c1"># Calculate derivatives using our dual_autodiff</span>
+            <span class="n">derivatives</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">autodiff</span><span class="p">(</span><span class="n">selected_function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+            <span class="c1"># Calculate function values</span>
+            <span class="n">y_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">selected_function</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Dual</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">real</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+
+            <span class="c1"># Create the visualization</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+            <span class="c1"># Plot original function</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_values</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Function&#39;</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Original Function: </span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;f(x)&#39;</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+            <span class="c1"># Plot derivative</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">derivatives</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Derivative&#39;</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Derivative&#39;</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;f&#39;(x)&quot;</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="c1"># Display analytical information</span>
+        <span class="k">with</span> <span class="n">text_output</span><span class="p">:</span>
+            <span class="n">text_output</span><span class="o">.</span><span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">x_test</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Test point for detailed analysis</span>
+            <span class="n">derivative_at_point</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">autodiff</span><span class="p">(</span><span class="n">selected_function</span><span class="p">,</span> <span class="n">x_test</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Analysis at x = </span><span class="si">{</span><span class="n">x_test</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function value: </span><span class="si">{</span><span class="n">selected_function</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Dual</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">real</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Derivative value: </span><span class="si">{</span><span class="n">derivative_at_point</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add function-specific insights</span>
+            <span class="k">if</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s1">&#39;Linear (2x + 1)&#39;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Note: The derivative is constant (2) as expected for a linear function!&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s1">&#39;Quadratic (x² - 3x + 2)&#39;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Note: The derivative is a linear function (2x - 3).&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s1">&#39;Sine (sin(2x))&#39;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Note: The derivative is 2cos(2x), another periodic function.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s1">&#39;Compound (x²sin(x))&#39;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Note: The derivative combines the product rule and chain rule.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create interactive widget</span>
+    <span class="n">interact_auto</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">interactive</span><span class="p">(</span>
+        <span class="n">update_plot</span><span class="p">,</span>
+        <span class="n">function_name</span><span class="o">=</span><span class="n">function_dropdown</span><span class="p">,</span>
+        <span class="n">x_range</span><span class="o">=</span><span class="n">x_range_slider</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Layout the widgets and outputs</span>
+    <span class="n">controls</span> <span class="o">=</span> <span class="n">VBox</span><span class="p">([</span><span class="n">function_dropdown</span><span class="p">,</span> <span class="n">x_range_slider</span><span class="p">])</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">VBox</span><span class="p">([</span><span class="n">plot_output</span><span class="p">,</span> <span class="n">text_output</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">HBox</span><span class="p">([</span><span class="n">controls</span><span class="p">,</span> <span class="n">results</span><span class="p">])</span>
+
+<span class="c1"># Display the interactive analysis</span>
+<span class="n">display</span><span class="p">(</span><span class="n">create_interactive_plot</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "943c610204914f699180da4c61599142", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Iman Faisal.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

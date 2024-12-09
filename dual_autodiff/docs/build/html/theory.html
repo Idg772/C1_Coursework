@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Theory of Dual Numbers &mdash; dual_autodiff 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Welcome to dual_autodiff’s Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            dual_autodiff
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Theory of Dual Numbers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#algebraic-structure">Algebraic Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#relationship-to-automatic-differentiation">Relationship to Automatic Differentiation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#properties-and-extensions">Properties and Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dual_autodiff</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Theory of Dual Numbers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/theory.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="theory-of-dual-numbers">
+<span id="theory"></span><h1>Theory of Dual Numbers<a class="headerlink" href="#theory-of-dual-numbers" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>Dual numbers are an algebraic extension of the real numbers that introduce a
+new element <span class="math notranslate nohighlight">\(\varepsilon\)</span> (often denoted “e” in code) with the defining
+property:</p>
+<div class="math notranslate nohighlight">
+\[\varepsilon^2 = 0.\]</div>
+<p>In other words, while <span class="math notranslate nohighlight">\(\varepsilon\)</span> is not zero itself, its square—and
+thus any higher power—is identically zero. A dual number therefore takes the form</p>
+<div class="math notranslate nohighlight">
+\[z = a + b\varepsilon,\]</div>
+<p>where <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are real numbers.</p>
+<p>This construction forms a commutative ring, often interpreted as the real numbers
+augmented with an infinitesimal direction. Dual numbers are a fundamental tool
+in automatic differentiation, where they represent both a function value and its
+first-order derivative simultaneously.</p>
+</section>
+<section id="algebraic-structure">
+<h2>Algebraic Structure<a class="headerlink" href="#algebraic-structure" title="Link to this heading"></a></h2>
+<p><strong>Addition:</strong> Given two dual numbers <span class="math notranslate nohighlight">\(z_1 = a + b\varepsilon\)</span> and
+<span class="math notranslate nohighlight">\(z_2 = c + d\varepsilon\)</span>, their sum is defined component-wise:</p>
+<div class="math notranslate nohighlight">
+\[z_1 + z_2 = (a + c) + (b + d)\varepsilon.\]</div>
+<p><strong>Multiplication:</strong> Multiplying two dual numbers uses distributivity and the rule
+<span class="math notranslate nohighlight">\(\varepsilon^2 = 0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[z_1 \cdot z_2 = (a + b\varepsilon)(c + d\varepsilon)
+= ac + (ad + bc)\varepsilon + bd\,\varepsilon^2.\]</div>
+<p>Since <span class="math notranslate nohighlight">\(\varepsilon^2 = 0\)</span>, the last term vanishes, leaving</p>
+<div class="math notranslate nohighlight">
+\[z_1 \cdot z_2 = ac + (ad + bc)\varepsilon.\]</div>
+<p><strong>Conjugation:</strong> There is a natural notion of a “conjugate” or “augmentation map”
+that projects a dual number onto its real part:</p>
+<div class="math notranslate nohighlight">
+\[\overline{z} = a.\]</div>
+<p>While not strictly necessary for basic arithmetic, this projection often aids in
+conceptualizing the structure as “real part plus infinitesimal part.”</p>
+</section>
+<section id="relationship-to-automatic-differentiation">
+<h2>Relationship to Automatic Differentiation<a class="headerlink" href="#relationship-to-automatic-differentiation" title="Link to this heading"></a></h2>
+<p>The primary motivation for dual numbers in many computational contexts is their
+ability to encode both a function’s value and its first-order derivative at a
+point. If we view <span class="math notranslate nohighlight">\(\varepsilon\)</span> as an infinitesimal increment, then for a
+differentiable function <span class="math notranslate nohighlight">\(f: \mathbb{R} \to \mathbb{R}\)</span>, we can write:</p>
+<div class="math notranslate nohighlight">
+\[f(a + \varepsilon) = f(a) + f'(a)\varepsilon.\]</div>
+<p>In essence, evaluating the function at a dual number “simulates” the function’s
+value and derivative. By propagating dual numbers through arithmetic operations,
+one obtains the derivative via a single function evaluation, a method known as
+<strong>forward-mode automatic differentiation</strong>.</p>
+</section>
+<section id="properties-and-extensions">
+<h2>Properties and Extensions<a class="headerlink" href="#properties-and-extensions" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Associativity and Commutativity:</strong>
+Dual numbers form a ring under the usual definitions of addition and
+multiplication. Associativity and commutativity hold for both operations, and
+distributivity of multiplication over addition is satisfied.</p></li>
+<li><p><strong>Subalgebra of Formal Power Series:</strong>
+The dual numbers can be viewed as a quotient of the ring of polynomials
+<span class="math notranslate nohighlight">\(\mathbb{R}[x]\)</span> by the ideal <span class="math notranslate nohighlight">\((x^2)\)</span>. Equivalently, they are like
+formal power series truncated at the <span class="math notranslate nohighlight">\(x^2\)</span> term.</p></li>
+<li><p><strong>Invertibility:</strong>
+A dual number <span class="math notranslate nohighlight">\(a + b\varepsilon\)</span> is invertible if and only if <span class="math notranslate nohighlight">\(a \neq 0\)</span>.
+In such a case, its inverse can be computed as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{a + b\varepsilon} = \frac{1}{a} - \frac{b}{a^2}\varepsilon,\]</div>
+<p>since higher-order terms vanish.</p>
+</li>
+<li><p><strong>No Ordering:</strong>
+Unlike real numbers, the set of dual numbers does not inherit an order relation
+that aligns with the arithmetic. While we can still compare the real parts
+separately, the infinitesimal portion does not lend itself to a total order.</p></li>
+</ol>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p>The dual numbers <span class="math notranslate nohighlight">\(a + b\varepsilon\)</span> elegantly capture both a value and a
+directional derivative, making them an invaluable tool in automatic
+differentiation. Their algebraic simplicity—stemming from the nilpotent element
+<span class="math notranslate nohighlight">\(\varepsilon\)</span>—renders them a natural extension to the real numbers
+for tasks requiring first-order sensitivity analysis.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to dual_autodiff’s Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Iman Faisal.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

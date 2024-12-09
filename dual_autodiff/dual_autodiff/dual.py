@@ -98,6 +98,19 @@ class Dual:
         return self.__mul__(other)
     
     def __truediv__(self, other): # Dual/Dual and Dual/c where c is a real number
+        '''
+        Division of two dual numbers or a dual number and a scalar.
+        Uses the quotient rule: (a + bε)/(c + dε) = (a/c) + ((bc - ad)/(c^2))ε  for c != 0
+        
+        Args:
+            other: A Dual number or scalar to divide by
+            
+        Returns:
+            Dual: The quotient of the two numbers
+            
+        Raises:
+            ZeroDivisionError: If the divisor is a Dual number with zero real part
+        '''
         if isinstance(other, Dual):
             if other.real == 0:
                 raise ZeroDivisionError("No unique solution for division by a Dual number with no real part")
@@ -109,6 +122,20 @@ class Dual:
             return NotImplementedError
     
     def __rtruediv__(self, other):  # c / Dual(a, b)
+        '''
+        Division of a scalar by a dual number.
+        Uses the quotient rule: c/(a + bε) = (c/a) + (-(bc)/(a^2))ε for a != 0
+        
+        Args:
+            other: A scalar to divide by the dual number
+            
+        Returns:
+            Dual: The quotient of the two numbers
+            
+        Raises:
+            ZeroDivisionError: If the dividend is a scalar with value 0
+        '''
+        
         if self.real == 0:
             raise ZeroDivisionError("Division by a Dual number with zero real part is undefined.")
         if isinstance(other, (int, float)):
@@ -117,6 +144,20 @@ class Dual:
             return NotImplemented
     
     def __pow__(self, power):
+        '''
+        Exponentiation of a dual number by another dual number or a scalar.
+        Uses the chain rule: (a + bε)^c = a^c + c*a^(c-1)*bε
+        
+        Args:
+            power: A Dual number or scalar to raise the dual number to
+            
+        Returns:
+            Dual: The result of exponentiation
+            
+        Raises:
+            ZeroDivisionError: If the real part of the dual number is 0 and the power is negative
+            ValueError: If the real part of the dual number is 0 and the power is a Dual number
+        '''
         if isinstance(power,(int,float)): #Dual**real
             if self.real == 0 and power < 0:
                 raise ZeroDivisionError("Cannot raise a dual number with zero real part to a negative power.")
@@ -133,6 +174,19 @@ class Dual:
             return NotImplementedError
     
     def __rpow__(self, other): # c**Dual where c is a real number
+        '''
+        Exponentiation of a scalar by a dual number.
+        Uses the chain rule: c**(a + bε) = c**a + c**a * b * log(c) * ε
+        
+        Args:
+            other: A scalar to raise the dual number to
+            
+        Returns:
+            Dual: The result of exponentiation
+            
+        Raises:
+            ValueError: If the scalar is non-positive
+        '''
         if isinstance(other, (int, float)):
             if other <= 0:
                 raise ValueError("Cannot raise a non-positive number to a Dual number")
@@ -143,51 +197,151 @@ class Dual:
             return NotImplemented
     
     def __neg__(self):
+        """
+        Negate a dual number.
+        
+        Returns:
+            Dual: The negated dual number
+        """
         return Dual(-self.real, -self.dual)
     
     def __repr__(self):
+        '''
+        Return a string representation of the dual number.
+        
+        Returns:
+            str: A string representation of the dual number
+        '''
         return f'Dual({self.real}, {self.dual})'
     
     
     def __eq__(self, other):
+        '''
+        Check if two dual numbers are equal.
+        
+        Args:
+            other: A Dual number or scalar to compare with
+            
+        Returns:
+            bool: True if the real and dual parts of the two numbers are equal, False otherwise
+        '''
         if isinstance(other, Dual):
             return self.real == other.real and self.dual == other.dual
         else:
             return self.real == other and self.dual == 0
         
     def __ne__(self, other):
+        '''
+        Check if two dual numbers are not equal.
+        
+        Args:
+            other: A Dual number or scalar to compare with
+        
+        Returns:
+            bool: True if the real and dual parts of the two numbers are not equal, False otherwise
+        '''
         return not self.__eq__(other)
     
     def sin(self):
+        '''
+        Calculate the sine of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing sin(x) in the real part and cos(x) * dx in the dual part,
+                  where x is the real part and dx is the dual part.
+        '''
         return Dual(np.sin(self.real), np.cos(self.real) * self.dual)
     
     def cos(self):
+        '''
+        Calculate the cosine of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing cos(x) in the real part and -sin(x) * dx in the dual part,
+                  where x is the real part and dx is the dual part.
+        '''
         return Dual(np.cos(self.real), -np.sin(self.real) * self.dual)
     
     def tan(self):
+        '''
+        Calculate the tangent of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing tan(x) in the real part and sec(x)^2 * dx in the dual part,
+                  where x is the real part and dx is the dual part.
+        '''
         return Dual(np.tan(self.real), 
                 self.dual * (1 / np.cos(self.real)**2))
     
     def exp(self):
+        '''
+        Calculate the exponential of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing exp(x) in the real part and exp(x) * dx in the dual part,
+                  where x is the real part and dx is the dual part.
+        '''
         return Dual(np.exp(self.real), np.exp(self.real) * self.dual)
     
     def log(self):
+        '''
+        Calculate the natural logarithm of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing log(x) in the real part and dx / x in the dual part,
+                  where x is the real part and dx is the dual part.
+        '''
         return Dual(np.log(self.real), self.dual / self.real)
     
     def sqrt(self):
+        '''
+        Calculate the square root of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing sqrt(x) in the real part and dx / (2 * sqrt(x)) in the dual part,
+                  where x is the real part and dx is the dual part.
+        '''
         return Dual(np.sqrt(self.real), self.dual / (2 * np.sqrt(self.real)))
     
     def sinh(self):
+        '''
+        Calculate the hyperbolic sine of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing sinh(x) in the real part and cosh(x) * dx in the dual part,
+                  where x is the real part and dx is the dual
+        '''
         return Dual(np.sinh(self.real), np.cosh(self.real) * self.dual)
     
     def cosh(self):
+        '''
+        Calculate the hyperbolic cosine of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing cosh(x) in the real part and sinh(x) * dx in the dual part,
+                  where x is the real part and dx is the dual
+        '''
         return Dual(np.cosh(self.real), np.sinh(self.real) * self.dual)
     
     def tanh(self):
+        '''
+        Calculate the hyperbolic tangent of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing tanh(x) in the real part and sech(x)^2 * dx in the dual part,
+                  where x is the real part and dx is the dual
+        '''
         return Dual(np.tanh(self.real),
                 self.dual * (1 / np.cosh(self.real)**2))
     
     def arcsin(self):
+        '''
+        Calculate the inverse sine (arcsin) of a Dual number.
+        
+        Returns:
+            Dual: A Dual number containing arcsin(x) in the real part and 1/sqrt(1-x^2) * dx in the dual part,
+                  where x is the real part and dx is the dual part.
+        '''
         return Dual(np.arcsin(self.real), self.dual / np.sqrt(1 - self.real**2))
     
     def arccos(self):

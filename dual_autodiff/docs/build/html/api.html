@@ -1,0 +1,519 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Documentation &mdash; dual_autodiff 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tutorial: Automatic Differentiation with dual_autodiff" href="dual_autodiff.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            dual_autodiff
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="theory.html">Theory of Dual Numbers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dual-class">Dual Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dual_autodiff.Dual"><code class="docutils literal notranslate"><span class="pre">Dual</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.__init__"><code class="docutils literal notranslate"><span class="pre">Dual.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.__add__"><code class="docutils literal notranslate"><span class="pre">Dual.__add__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Dual.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.__mul__"><code class="docutils literal notranslate"><span class="pre">Dual.__mul__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.__pow__"><code class="docutils literal notranslate"><span class="pre">Dual.__pow__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.__truediv__"><code class="docutils literal notranslate"><span class="pre">Dual.__truediv__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.arccos"><code class="docutils literal notranslate"><span class="pre">Dual.arccos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.arccosh"><code class="docutils literal notranslate"><span class="pre">Dual.arccosh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.arcsin"><code class="docutils literal notranslate"><span class="pre">Dual.arcsin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.arcsinh"><code class="docutils literal notranslate"><span class="pre">Dual.arcsinh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.arctan"><code class="docutils literal notranslate"><span class="pre">Dual.arctan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.arctanh"><code class="docutils literal notranslate"><span class="pre">Dual.arctanh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.cos"><code class="docutils literal notranslate"><span class="pre">Dual.cos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.cosh"><code class="docutils literal notranslate"><span class="pre">Dual.cosh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.exp"><code class="docutils literal notranslate"><span class="pre">Dual.exp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.log"><code class="docutils literal notranslate"><span class="pre">Dual.log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.sin"><code class="docutils literal notranslate"><span class="pre">Dual.sin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.sinh"><code class="docutils literal notranslate"><span class="pre">Dual.sinh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.sqrt"><code class="docutils literal notranslate"><span class="pre">Dual.sqrt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.tan"><code class="docutils literal notranslate"><span class="pre">Dual.tan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dual_autodiff.Dual.tanh"><code class="docutils literal notranslate"><span class="pre">Dual.tanh()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#automatic-differentiation">Automatic Differentiation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dual_autodiff.autodiff"><code class="docutils literal notranslate"><span class="pre">autodiff()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dual_autodiff</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-documentation">
+<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Link to this heading"></a></h1>
+<section id="dual-class">
+<h2>Dual Class<a class="headerlink" href="#dual-class" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dual_autodiff.Dual">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dual_autodiff.</span></span><span class="sig-name descname"><span class="pre">Dual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dual</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual" title="Link to this definition"></a></dt>
+<dd><p>A class implementing dual numbers for automatic differentiation.</p>
+<p>A dual number has the form a + bε where:
+- a is the real part
+- b is the dual part
+- ε is the dual unit with the property ε² = 0</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dual</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize a dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>real</strong> – The real part of the dual number</p></li>
+<li><p><strong>dual</strong> – The dual part of the dual number</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.__add__">
+<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.__add__" title="Link to this definition"></a></dt>
+<dd><p>Add two dual numbers or a dual number and a scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – A Dual number or scalar to add</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sum of the two numbers</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dual</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Initialize a dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>real</strong> – The real part of the dual number</p></li>
+<li><p><strong>dual</strong> – The dual part of the dual number</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.__mul__">
+<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.__mul__" title="Link to this definition"></a></dt>
+<dd><p>Multiply two dual numbers or a dual number and a scalar.</p>
+<p>Uses the product rule: (a + bε)(c + dε) = ac + (ad + bc)ε</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – A Dual number or scalar to multiply</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The product of the two numbers</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.__pow__">
+<span class="sig-name descname"><span class="pre">__pow__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">power</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.__pow__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.__pow__" title="Link to this definition"></a></dt>
+<dd><p>Exponentiation of a dual number by another dual number or a scalar.
+Uses the chain rule: (a + bε)^c = a^c + c*a^(c-1)*bε</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>power</strong> – A Dual number or scalar to raise the dual number to</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of exponentiation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ZeroDivisionError</strong> – If the real part of the dual number is 0 and the power is negative</p></li>
+<li><p><strong>ValueError</strong> – If the real part of the dual number is 0 and the power is a Dual number</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.__truediv__">
+<span class="sig-name descname"><span class="pre">__truediv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.__truediv__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.__truediv__" title="Link to this definition"></a></dt>
+<dd><p>Division of two dual numbers or a dual number and a scalar.
+Uses the quotient rule: (a + bε)/(c + dε) = (a/c) + ((bc - ad)/(c^2))ε  for c != 0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – A Dual number or scalar to divide by</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The quotient of the two numbers</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ZeroDivisionError</strong> – If the divisor is a Dual number with zero real part</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.arccos">
+<span class="sig-name descname"><span class="pre">arccos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.arccos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.arccos" title="Link to this definition"></a></dt>
+<dd><p>Calculate the inverse cosine (arccos) of a Dual number.</p>
+<p>Returns a Dual number containing arccos(x) in the real part and
+-1/sqrt(1-x^2) * dx in the dual part, where x is the real part and dx is the dual part.</p>
+<p>Domain: -1 &lt;= real part &lt;= 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.arccosh">
+<span class="sig-name descname"><span class="pre">arccosh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.arccosh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.arccosh" title="Link to this definition"></a></dt>
+<dd><p>Calculate the inverse hyperbolic cosine (arccosh) of a Dual number.</p>
+<p>Returns a Dual number containing arccosh(x) in the real part and
+1/sqrt(x^2-1) * dx in the dual part, where x is the real part and dx is the dual part.</p>
+<p>Domain: real part &gt;= 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.arcsin">
+<span class="sig-name descname"><span class="pre">arcsin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.arcsin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.arcsin" title="Link to this definition"></a></dt>
+<dd><p>Calculate the inverse sine (arcsin) of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing arcsin(x) in the real part and 1/sqrt(1-x^2) * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual part.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.arcsinh">
+<span class="sig-name descname"><span class="pre">arcsinh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.arcsinh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.arcsinh" title="Link to this definition"></a></dt>
+<dd><p>Calculate the inverse hyperbolic sine (arcsinh) of a Dual number.</p>
+<p>Returns a Dual number containing arcsinh(x) in the real part and
+1/sqrt(x^2+1) * dx in the dual part, where x is the real part and dx is the dual part.</p>
+<p>Domain: all real numbers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.arctan">
+<span class="sig-name descname"><span class="pre">arctan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.arctan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.arctan" title="Link to this definition"></a></dt>
+<dd><p>Calculate the inverse tangent (arctan) of a Dual number.</p>
+<p>Returns a Dual number containing arctan(x) in the real part and
+1/(1+x^2) * dx in the dual part, where x is the real part and dx is the dual part.</p>
+<p>Domain: all real numbers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.arctanh">
+<span class="sig-name descname"><span class="pre">arctanh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.arctanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.arctanh" title="Link to this definition"></a></dt>
+<dd><p>Calculate the inverse hyperbolic tangent (arctanh) of a Dual number.</p>
+<p>Returns a Dual number containing arctanh(x) in the real part and
+1/(1-x^2) * dx in the dual part, where x is the real part and dx is the dual part.</p>
+<p>Domain: -1 &lt; real part &lt; 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.cos">
+<span class="sig-name descname"><span class="pre">cos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.cos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.cos" title="Link to this definition"></a></dt>
+<dd><p>Calculate the cosine of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing cos(x) in the real part and -sin(x) * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual part.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.cosh">
+<span class="sig-name descname"><span class="pre">cosh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.cosh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.cosh" title="Link to this definition"></a></dt>
+<dd><p>Calculate the hyperbolic cosine of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing cosh(x) in the real part and sinh(x) * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.exp">
+<span class="sig-name descname"><span class="pre">exp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.exp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.exp" title="Link to this definition"></a></dt>
+<dd><p>Calculate the exponential of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing exp(x) in the real part and exp(x) * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual part.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.log" title="Link to this definition"></a></dt>
+<dd><p>Calculate the natural logarithm of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing log(x) in the real part and dx / x in the dual part,</dt><dd><p>where x is the real part and dx is the dual part.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.sin">
+<span class="sig-name descname"><span class="pre">sin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.sin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.sin" title="Link to this definition"></a></dt>
+<dd><p>Calculate the sine of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing sin(x) in the real part and cos(x) * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual part.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.sinh">
+<span class="sig-name descname"><span class="pre">sinh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.sinh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.sinh" title="Link to this definition"></a></dt>
+<dd><p>Calculate the hyperbolic sine of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing sinh(x) in the real part and cosh(x) * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.sqrt">
+<span class="sig-name descname"><span class="pre">sqrt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.sqrt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.sqrt" title="Link to this definition"></a></dt>
+<dd><p>Calculate the square root of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing sqrt(x) in the real part and dx / (2 * sqrt(x)) in the dual part,</dt><dd><p>where x is the real part and dx is the dual part.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.tan">
+<span class="sig-name descname"><span class="pre">tan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.tan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.tan" title="Link to this definition"></a></dt>
+<dd><p>Calculate the tangent of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing tan(x) in the real part and sec(x)^2 * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual part.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dual_autodiff.Dual.tanh">
+<span class="sig-name descname"><span class="pre">tanh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dual_autodiff/dual.html#Dual.tanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.Dual.tanh" title="Link to this definition"></a></dt>
+<dd><p>Calculate the hyperbolic tangent of a Dual number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A Dual number containing tanh(x) in the real part and sech(x)^2 * dx in the dual part,</dt><dd><p>where x is the real part and dx is the dual</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dual_autodiff.Dual" title="dual_autodiff.Dual">Dual</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="automatic-differentiation">
+<h2>Automatic Differentiation<a class="headerlink" href="#automatic-differentiation" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dual_autodiff.autodiff">
+<span class="sig-prename descclassname"><span class="pre">dual_autodiff.</span></span><span class="sig-name descname"><span class="pre">autodiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dual_part</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></span><a class="reference internal" href="_modules/dual_autodiff/dual.html#autodiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dual_autodiff.autodiff" title="Link to this definition"></a></dt>
+<dd><p>Compute the derivative of a function at given points using dual numbers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The function to differentiate. Should accept and work with Dual numbers.</p></li>
+<li><p><strong>x</strong> – Points at which to evaluate the derivative. Can be a single number or array-like.</p></li>
+<li><p><strong>dual_part</strong> – The dual part to use for differentiation (default=1.0)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The derivative(s) of the function at the given point(s).
+Returns a numpy array for array-like input, or a float for scalar input.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># f(x) = x²</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">autodiff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># Derivative of x² at x=2</span>
+<span class="go">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">autodiff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>  <span class="c1"># Derivatives at multiple points</span>
+<span class="go">array([2., 4., 6.])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dual_autodiff.html" class="btn btn-neutral float-left" title="Tutorial: Automatic Differentiation with dual_autodiff" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Iman Faisal.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
