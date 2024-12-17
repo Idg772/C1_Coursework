@@ -1,0 +1,2 @@
+global-exclude *.pyx
+global-include *.so *.pyd

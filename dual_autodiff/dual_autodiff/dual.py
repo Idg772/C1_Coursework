@@ -228,7 +228,7 @@ class Dual:
         if isinstance(other, Dual):
             return self.real == other.real and self.dual == other.dual
         else:
-            return self.real == other and self.dual == 0
+            return TypeError("Cannot compare Dual number with non-Dual number.")
         
     def __ne__(self, other):
         '''
@@ -242,13 +242,25 @@ class Dual:
         '''
         return not self.__eq__(other)
     
+    def __lt__(self, other):
+        return TypeError("Comparison operators are not defined for Dual numbers.")
+    
+    def __le__(self, other):
+        return TypeError("Comparison operators are not defined for Dual numbers.")
+    
+    def __gt__(self, other):
+        return TypeError("Comparison operators are not defined for Dual numbers.")
+    
+    def __ge__(self, other):
+        return TypeError("Comparison operators are not defined for Dual numbers.")
+    
     def sin(self):
         '''
         Calculate the sine of a Dual number.
         
         Returns:
-            Dual: A Dual number containing sin(x) in the real part and cos(x) * dx in the dual part,
-                  where x is the real part and dx is the dual part.
+            Dual: A Dual number containing sin(x) in the real part and cos(x) * ε in the dual part,
+                  where x is the real part and ε is the dual part.
         '''
         return Dual(np.sin(self.real), np.cos(self.real) * self.dual)
     
@@ -257,8 +269,8 @@ class Dual:
         Calculate the cosine of a Dual number.
         
         Returns:
-            Dual: A Dual number containing cos(x) in the real part and -sin(x) * dx in the dual part,
-                  where x is the real part and dx is the dual part.
+            Dual: A Dual number containing cos(x) in the real part and -sin(x) * ε in the dual part,
+                  where x is the real part and ε is the dual part.
         '''
         return Dual(np.cos(self.real), -np.sin(self.real) * self.dual)
     
@@ -267,8 +279,8 @@ class Dual:
         Calculate the tangent of a Dual number.
         
         Returns:
-            Dual: A Dual number containing tan(x) in the real part and sec(x)^2 * dx in the dual part,
-                  where x is the real part and dx is the dual part.
+            Dual: A Dual number containing tan(x) in the real part and sec(x)^2 * ε in the dual part,
+                  where x is the real part and ε is the dual part.
         '''
         return Dual(np.tan(self.real), 
                 self.dual * (1 / np.cos(self.real)**2))
@@ -278,8 +290,8 @@ class Dual:
         Calculate the exponential of a Dual number.
         
         Returns:
-            Dual: A Dual number containing exp(x) in the real part and exp(x) * dx in the dual part,
-                  where x is the real part and dx is the dual part.
+            Dual: A Dual number containing exp(x) in the real part and exp(x) * ε in the dual part,
+                  where x is the real part and ε is the dual part.
         '''
         return Dual(np.exp(self.real), np.exp(self.real) * self.dual)
     
@@ -288,9 +300,11 @@ class Dual:
         Calculate the natural logarithm of a Dual number.
         
         Returns:
-            Dual: A Dual number containing log(x) in the real part and dx / x in the dual part,
-                  where x is the real part and dx is the dual part.
+            Dual: A Dual number containing log(x) in the real part and ε / x in the dual part,
+                  where x is the real part and ε is the dual part.
         '''
+        if self.real <= 0:
+            raise ValueError("Natural logarithm is not defined for non-positive numbers")
         return Dual(np.log(self.real), self.dual / self.real)
     
     def sqrt(self):
@@ -298,9 +312,11 @@ class Dual:
         Calculate the square root of a Dual number.
         
         Returns:
-            Dual: A Dual number containing sqrt(x) in the real part and dx / (2 * sqrt(x)) in the dual part,
-                  where x is the real part and dx is the dual part.
+            Dual: A Dual number containing sqrt(x) in the real part and ε / (2 * sqrt(x)) in the dual part,
+                  where x is the real part and ε is the dual part.
         '''
+        if self.real < 0:
+            raise ValueError("Square root is not defined for negative numbers")
         return Dual(np.sqrt(self.real), self.dual / (2 * np.sqrt(self.real)))
     
     def sinh(self):
@@ -308,8 +324,8 @@ class Dual:
         Calculate the hyperbolic sine of a Dual number.
         
         Returns:
-            Dual: A Dual number containing sinh(x) in the real part and cosh(x) * dx in the dual part,
-                  where x is the real part and dx is the dual
+            Dual: A Dual number containing sinh(x) in the real part and cosh(x) * ε in the dual part,
+                  where x is the real part and ε is the dual
         '''
         return Dual(np.sinh(self.real), np.cosh(self.real) * self.dual)
     
@@ -318,8 +334,8 @@ class Dual:
         Calculate the hyperbolic cosine of a Dual number.
         
         Returns:
-            Dual: A Dual number containing cosh(x) in the real part and sinh(x) * dx in the dual part,
-                  where x is the real part and dx is the dual
+            Dual: A Dual number containing cosh(x) in the real part and sinh(x) * ε in the dual part,
+                  where x is the real part and ε is the dual
         '''
         return Dual(np.cosh(self.real), np.sinh(self.real) * self.dual)
     
@@ -328,8 +344,8 @@ class Dual:
         Calculate the hyperbolic tangent of a Dual number.
         
         Returns:
-            Dual: A Dual number containing tanh(x) in the real part and sech(x)^2 * dx in the dual part,
-                  where x is the real part and dx is the dual
+            Dual: A Dual number containing tanh(x) in the real part and sech(x)^2 * ε in the dual part,
+                  where x is the real part and ε is the dual
         '''
         return Dual(np.tanh(self.real),
                 self.dual * (1 / np.cosh(self.real)**2))
@@ -339,9 +355,13 @@ class Dual:
         Calculate the inverse sine (arcsin) of a Dual number.
         
         Returns:
-            Dual: A Dual number containing arcsin(x) in the real part and 1/sqrt(1-x^2) * dx in the dual part,
-                  where x is the real part and dx is the dual part.
+            Dual: A Dual number containing arcsin(x) in the real part and 1/sqrt(1-x^2) * ε in the dual part,
+                  where x is the real part and ε is the dual part.
+            
+        Domain: -1 <= real part <= 1
         '''
+        if self.real < -1 or self.real > 1:
+            raise ValueError("Inverse sine is only defined for real part between -1 and 1")
         return Dual(np.arcsin(self.real), self.dual / np.sqrt(1 - self.real**2))
     
     def arccos(self):
@@ -349,10 +369,12 @@ class Dual:
         Calculate the inverse cosine (arccos) of a Dual number.
 
         Returns a Dual number containing arccos(x) in the real part and 
-        -1/sqrt(1-x^2) * dx in the dual part, where x is the real part and dx is the dual part.
+        -1/sqrt(1-x^2) * ε in the dual part, where x is the real part and ε is the dual part.
 
         Domain: -1 <= real part <= 1
         """
+        if self.real < -1 or self.real > 1:
+            raise ValueError("Inverse cosine is only defined for real part between -1 and 1")
         return Dual(np.arccos(self.real), -self.dual / np.sqrt(1 - self.real**2))
     
     def arctan(self):
@@ -360,7 +382,7 @@ class Dual:
         Calculate the inverse tangent (arctan) of a Dual number.
 
         Returns a Dual number containing arctan(x) in the real part and 
-        1/(1+x^2) * dx in the dual part, where x is the real part and dx is the dual part.
+        1/(1+x^2) * ε in the dual part, where x is the real part and ε is the dual part.
 
         Domain: all real numbers
         """
@@ -371,7 +393,7 @@ class Dual:
         Calculate the inverse hyperbolic sine (arcsinh) of a Dual number.
 
         Returns a Dual number containing arcsinh(x) in the real part and 
-        1/sqrt(x^2+1) * dx in the dual part, where x is the real part and dx is the dual part.
+        1/sqrt(x^2+1) * ε in the dual part, where x is the real part and ε is the dual part.
 
         Domain: all real numbers
         """
@@ -382,10 +404,12 @@ class Dual:
         Calculate the inverse hyperbolic cosine (arccosh) of a Dual number.
 
         Returns a Dual number containing arccosh(x) in the real part and 
-        1/sqrt(x^2-1) * dx in the dual part, where x is the real part and dx is the dual part.
+        1/sqrt(x^2-1) * ε in the dual part, where x is the real part and ε is the dual part.
 
         Domain: real part >= 1
         """
+        if self.real < 1:
+            raise ValueError("Inverse hyperbolic cosine is only defined for real part greater than or equal to 1")
         return Dual(np.arccosh(self.real), self.dual / np.sqrt(self.real**2 - 1))
     
     def arctanh(self):
@@ -393,10 +417,12 @@ class Dual:
         Calculate the inverse hyperbolic tangent (arctanh) of a Dual number.
 
         Returns a Dual number containing arctanh(x) in the real part and 
-        1/(1-x^2) * dx in the dual part, where x is the real part and dx is the dual part.
+        1/(1-x^2) * ε in the dual part, where x is the real part and ε is the dual part.
 
         Domain: -1 < real part < 1
         """
+        if self.real <= -1 or self.real >= 1:
+            raise ValueError("Inverse hyperbolic tangent is only defined for real part between -1 and 1")
         return Dual(np.arctanh(self.real), self.dual / (1 - self.real**2))
 
 

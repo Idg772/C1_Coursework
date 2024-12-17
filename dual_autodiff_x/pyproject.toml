@@ -22,3 +22,11 @@ dependencies = [
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["dual_autodiff_x"]
+
+[tool.cibuildwheel]
+# Build for both Python 3.10 and 3.11 on x86_64 Linux
+build = ["cp310-manylinux_x86_64", "cp311-manylinux_x86_64"]
+
+# Skip unnecessary builds
+skip = ["*-musllinux_*"]
+

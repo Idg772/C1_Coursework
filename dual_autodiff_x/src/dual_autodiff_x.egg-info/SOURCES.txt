@@ -1,10 +1,14 @@
+MANIFEST.in
 pyproject.toml
 setup.py
 src/dual_autodiff_x/__init__.py
 src/dual_autodiff_x/dual.c
+src/dual_autodiff_x/dual.cpython-312-darwin.so
 src/dual_autodiff_x.egg-info/PKG-INFO
 src/dual_autodiff_x.egg-info/SOURCES.txt
 src/dual_autodiff_x.egg-info/dependency_links.txt
 src/dual_autodiff_x.egg-info/not-zip-safe
 src/dual_autodiff_x.egg-info/requires.txt
 src/dual_autodiff_x.egg-info/top_level.txt
+wheel_contents/dual_autodiff_x/dual.cpython-311-x86_64-linux-gnu.so
+wheel_contents/dual_autodiff_x/dual.cpython-312-darwin.so

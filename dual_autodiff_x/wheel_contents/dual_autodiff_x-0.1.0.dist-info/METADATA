@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: dual_autodiff_x
+Version: 0.1.0
+Summary: Cythonized automatic differentiation using dual numbers
+Author-email: Iman Faisal <igf23@cam.ac.uk>
+Requires-Python: >=3.10
+Requires-Dist: numpy>=1.21.0

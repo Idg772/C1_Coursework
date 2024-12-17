@@ -1,0 +1,8 @@
+dual_autodiff_x-0.1.0.dist-info/top_level.txt,sha256=EWALXRSdadhQpj-fKjg0KbhKfgUdRlG2zNhN89Hpy_M,16
+dual_autodiff_x-0.1.0.dist-info/METADATA,sha256=tp58tn-7FGzMzfTz3NNipMd9XYvrGLqmNjwVyG5NUhk,221
+dual_autodiff_x-0.1.0.dist-info/RECORD,,
+dual_autodiff_x-0.1.0.dist-info/WHEEL,sha256=9BFfIe-Zq441iQ0ehutX65O5faGDpmB1Uw3WaQGk4f0,151
+dual_autodiff_x/__init__.py,sha256=8655TkX3MM3EN8037swvCEwNOJlJEXSuOGiFF-M0Z48,64
+dual_autodiff_x/dual.c,sha256=RyR73pJYTpE8H8JWao2Xnvj3NHiu1nsIBVK2bvamtRE,793184
+dual_autodiff_x/dual.cpython-312-darwin.so,sha256=ZSoz780V8YOLGWxjrFaJpWW6jTMlmyCHnlWlZ_O4wxQ,155864
+dual_autodiff_x/dual.cpython-311-x86_64-linux-gnu.so,sha256=Z-CMGhbJmDTAwMc-KpO3I2YDyL2ePrIgyTFdTU9TvlA,1109520
